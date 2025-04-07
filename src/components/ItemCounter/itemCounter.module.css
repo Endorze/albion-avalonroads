@@ -1,0 +1,21 @@
+.item {
+    display: flex;
+    flex-direction: column;
+    max-width: 80px;
+    gap: 5px;
+}
+
+.item button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.counter {
+    z-index: 1;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size: 3rem;
+
+  -webkit-text-stroke: 2px black;
+}
