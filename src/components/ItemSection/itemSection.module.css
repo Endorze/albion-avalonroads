@@ -1,0 +1,32 @@
+.section {
+    display: flex;
+    gap: 16px;
+}
+
+.horizontal {
+    display: flex;
+    justify-content: space-between;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.wrapper {
+    margin: auto;
+    max-width: 1000px;
+}
+
+.wrapper h2 {
+    font-weight: 400;
+    font-size: 1.3rem;
+}
+
+.tier {
+    display: flex;
+    gap: 32px;
+    flex-direction: column;
+    align-items: center;
+}

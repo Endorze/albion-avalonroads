@@ -1,7 +1,10 @@
+import ItemSection from "../../components/ItemSection/itemSection";
+import styles from "./home.module.css"
+
 const Home = () => {
     return (
-        <div>
-            <h1>Home Page</h1>
+        <div className={styles.home}>
+            <ItemSection />
         </div>
     )
 }
