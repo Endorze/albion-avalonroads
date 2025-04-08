@@ -3,13 +3,14 @@ import styles from "./itemCounter.module.css"
 
 type Props = {
     imageSrc?: string,
+    value: number,
+    onChange: (newValue: number) => void
 }
 
-const ItemCounter = ({ imageSrc }: Props) => {
-    const [count, setCount] = useState(0);
+const ItemCounter = ({ imageSrc, value, onChange }: Props) => {
 
-    const increase = () => setCount(c => c + 1);
-    const decrease = () => setCount(c => Math.max(0, c - 1));
+    const increase = () => onChange(value + 1);
+    const decrease = () => onChange(Math.max(0, value - 1));
 
     return (
         <div className={styles.item}>
@@ -18,9 +19,9 @@ const ItemCounter = ({ imageSrc }: Props) => {
                 backgroundImage: `url(${imageSrc})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",  width: "80px",
                 height: "80px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "5px"
             }}>
-                <div className={styles.counter}>{count}</div>
+                <div className={styles.counter}>{value}</div>
             </div>
-            {count > 0 && (
+            {value > 0 && (
                 <button onClick={decrease}>🔽</button>
             )}
         </div>
