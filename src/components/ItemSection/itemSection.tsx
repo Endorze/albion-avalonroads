@@ -61,7 +61,7 @@ const ItemSection = () => {
     }, []);
 
     const getZoneName = async () => {
-        const response = await axios.get("http://192.168.0.21:55328/api/v1/current-zone")
+        const response = await axios.get("http://192.168.0.21:55327/api/v1/current-zone")
         zoneName = response.data.name
     }
 
