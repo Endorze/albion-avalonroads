@@ -10,7 +10,7 @@ const Layout = () => {
     </header>
     <Outlet />
     <footer>
-        Footer
+        {/* Footer */}
     </footer>
     </>
     )
