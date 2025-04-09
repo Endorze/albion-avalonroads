@@ -9,8 +9,8 @@ type Props = {
 
 const ItemCounter = ({ imageSrc, value, onChange }: Props) => {
 
-    const increase = () => onChange(value + 1);
-    const decrease = () => onChange(Math.max(0, value - 1));
+    const increase = () => onChange(1);
+    const decrease = () => onChange(-1);
 
     return (
         <div className={styles.item}>
