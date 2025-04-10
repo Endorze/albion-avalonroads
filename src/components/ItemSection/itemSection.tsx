@@ -110,7 +110,7 @@ const ItemSection = () => {
     if (zoneName == null) {
         return;
     }
-    
+
     return (
         <div className={styles.wrapper}>
             <ProgressBar exploredZones={exploredData.numRoadsExplored} maxZones={exploredData.numRoads}/>
@@ -169,7 +169,7 @@ const ItemSection = () => {
                         <h2>Green Chest Cluster</h2>
                     </div>
                     <div className={styles.section}>
-                        <ItemCounter imageSrc={green} value={resources.greenCluster} onChange={(value) => handleChange("green", value)} />
+                        <ItemCounter imageSrc={green} value={resources.greenCluster} onChange={(value) => handleChange("greenCluster", value)} />
                     </div>
                 </div>
             </div>
