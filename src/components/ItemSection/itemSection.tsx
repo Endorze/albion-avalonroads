@@ -39,7 +39,7 @@ const ItemSection = () => {
 
     const handleChange = async (key: keyof typeof resources, newValue: number) => {
 
-        const response = await axios.post(`http://192.168.0.21:55328/api/v1/roads/${zoneName}/edit`, {
+        const response = await axios.post(`http://90.143.5.6:55328/api/v1/roads/${zoneName}/edit`, {
             [key]: newValue
         })
 
@@ -56,7 +56,7 @@ const ItemSection = () => {
         if (zoneName == null) return;
 
         try {
-            const response = await axios.get(`http://192.168.0.21:55328/api/v1/roads/${zoneName}`)
+            const response = await axios.get(`http://90.143.5.6:55328/api/v1/roads/${zoneName}`)
     
             if (response.status != 200) {
                 console.log("Something bad happened")
@@ -70,7 +70,7 @@ const ItemSection = () => {
     }
 
     const fetchExplored = async () => {
-        const response = await axios.get(`http://192.168.0.21:55328/api/v1/roads/stats`)
+        const response = await axios.get(`http://90.143.5.6:55328/api/v1/roads/stats`)
 
         if (response.status != 200) {
             console.log("Something bad happened")
