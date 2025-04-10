@@ -1,5 +1,5 @@
 type Props = {
-    zone: string;
+    zone: string | null;
 }
 
 const CurrentZone = (zone: Props) => {

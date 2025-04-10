@@ -6,23 +6,36 @@ import orange from "/images/chests/orange.png"
 import { useEffect, useState } from "react";
 import CurrentZone from "../CurrentZone/currentZone";
 import axios from "axios";
+import ProgressBar from "../ProgressBar/progressBar";
 
-let zoneName = ""
+let zoneName: string | null = null
 
 const ItemSection = () => {
 
     const [resources, setResources] = useState({
-        name: "",
+        tier: 0,
         wood: 0,
+        woodCluster: 0,
         stone: 0,
-        ore: 0,
+        stoneCluster: 0,
         hide: 0,
+        hideCluster: 0,
+        ore: 0,
+        oreCluster: 0,
         fiber: 0,
+        fiberCluster: 0,
         green: 0,
+        greenCluster: 0,
         blue: 0,
         yellow: 0,
-        tier: 0
+        dungeon: 0,
+        type: "JUNCTION"
     });
+
+    const [exploredData, setExploredData] = useState({
+        numRoads: 0,
+        numRoadsExplored: 0,
+    })
 
     const handleChange = async (key: keyof typeof resources, newValue: number) => {
 
@@ -39,67 +52,124 @@ const ItemSection = () => {
     }
 
     const fetchResources = async () => {
-        const response = await axios.get(`http://192.168.0.21:55328/api/v1/roads/${zoneName}`)
-        
+
+        if (zoneName == null) return;
+
+        try {
+            const response = await axios.get(`http://192.168.0.21:55328/api/v1/roads/${zoneName}`)
+    
+            if (response.status != 200) {
+                console.log("Something bad happened")
+                return
+            }
+    
+            setResources(response.data)
+        } catch (error) {
+
+        }
+    }
+
+    const fetchExplored = async () => {
+        const response = await axios.get(`http://192.168.0.21:55328/api/v1/roads/stats`)
+
         if (response.status != 200) {
             console.log("Something bad happened")
             return
         }
 
-        setResources(response.data)
+        setExploredData(response.data);
+        console.log("ExploredZones:", response.data.numRoadsExplored, "/", response.data.numRoads);
     }
 
     useEffect(() => {
-        const interval = setInterval(async () => {
+        const interval1 = setInterval(async () => {
             await getZoneName();
             await fetchResources();
         }, 3000)
 
+        fetchExplored();
+        const interval2 = setInterval(async () => {
+            await fetchExplored();
+        }, 10000)
+
         return () => {
-            clearInterval(interval)
+            clearInterval(interval1)
+            clearInterval(interval2)
         }
     }, []);
 
     const getZoneName = async () => {
-        const response = await axios.get("http://192.168.0.21:55327/api/v1/current-zone")
-        zoneName = response.data.name
+        try {
+            const response = await axios.get("http://localhost:55327/api/v1/current-zone")
+            zoneName = response.data.name
+        } catch (error) {
+            zoneName = null
+        }
     }
 
+    if (zoneName == null) {
+        return;
+    }
+    
     return (
         <div className={styles.wrapper}>
-            <CurrentZone zone={zoneName}/>
+            <ProgressBar exploredZones={exploredData.numRoadsExplored} maxZones={exploredData.numRoads}/>
+            <CurrentZone zone={zoneName} />
             <div className={styles.horizontal}>
-            <div className={styles.tier}>
+                <div className={styles.tier}>
                     <div>
                         <h2>Tier</h2>
                     </div>
                     <div className={styles.section}>
-                        <ItemCounter value={resources.tier} onChange={(value) => handleChange("tier", value)}/>
+                        <ItemCounter value={resources.tier} onChange={(value) => handleChange("tier", value)} />
                     </div>
                 </div>
                 <div className={styles.vertical}>
                     <div>
-                        <h2>Resources</h2>
+                        <h2>Small Resources</h2>
                     </div>
                     {/** 
                      * Behöver skapa en handleChange funktion som tar in en resurs, tar ett värde, text (handleChange("wood", value))
                     */}
                     <div className={styles.section}>
-                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Bloodoak%20Logs.png?locale=en" value={resources.wood} onChange={(value) => handleChange("wood", value)}/>
-                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Slate.png?locale=en" value={resources.stone} onChange={(value) => handleChange("stone", value)}/>
-                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Robust%20Hide.png?locale=en" value={resources.hide} onChange={(value) => handleChange("hide", value)}/>
-                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Runite%20Ore.png?locale=en" value={resources.ore} onChange={(value) => handleChange("ore", value)}/>
-                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Amberleaf%20Cotton.png?locale=en" value={resources.fiber} onChange={(value) => handleChange("fiber", value)}/>
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Bloodoak%20Logs.png?locale=en" value={resources.wood} onChange={(value) => handleChange("wood", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Slate.png?locale=en" value={resources.stone} onChange={(value) => handleChange("stone", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Robust%20Hide.png?locale=en" value={resources.hide} onChange={(value) => handleChange("hide", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Runite%20Ore.png?locale=en" value={resources.ore} onChange={(value) => handleChange("ore", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Amberleaf%20Cotton.png?locale=en" value={resources.fiber} onChange={(value) => handleChange("fiber", value)} />
                     </div>
                 </div>
                 <div className={styles.vertical}>
                     <div>
-                        <h2>Content</h2>
+                        <h2>Chest Content</h2>
                     </div>
                     <div className={styles.section}>
-                        <ItemCounter imageSrc={green} value={resources.green} onChange={(value) => handleChange("green", value)}/>
-                        <ItemCounter imageSrc={blue} value={resources.blue} onChange={(value) => handleChange("blue", value)}/>
+                        <ItemCounter imageSrc={green} value={resources.green} onChange={(value) => handleChange("green", value)} />
+                        <ItemCounter imageSrc={blue} value={resources.blue} onChange={(value) => handleChange("blue", value)} />
                         <ItemCounter imageSrc={orange} value={resources.yellow} onChange={(value) => handleChange("yellow", value)} />
+                    </div>
+                </div>
+            </div>
+            <div className={styles.horizontal}>
+                <div></div>
+                <div className={styles.vertical}>
+                    <div>
+                        <h2>Resource Clusters</h2>
+                    </div>
+                    <div className={styles.section}>
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Bloodoak%20Logs.png?locale=en" value={resources.woodCluster} onChange={(value) => handleChange("woodCluster", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Slate.png?locale=en" value={resources.stoneCluster} onChange={(value) => handleChange("stoneCluster", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Robust%20Hide.png?locale=en" value={resources.hideCluster} onChange={(value) => handleChange("hideCluster", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Runite%20Ore.png?locale=en" value={resources.oreCluster} onChange={(value) => handleChange("oreCluster", value)} />
+                        <ItemCounter imageSrc="https://render.albiononline.com/v1/item/Amberleaf%20Cotton.png?locale=en" value={resources.fiberCluster} onChange={(value) => handleChange("fiberCluster", value)} />
+                    </div>
+                </div>
+                <div className={styles.vertical}>
+                    <div>
+                        <h2>Green Chest Cluster</h2>
+                    </div>
+                    <div className={styles.section}>
+                        <ItemCounter imageSrc={green} value={resources.greenCluster} onChange={(value) => handleChange("green", value)} />
                     </div>
                 </div>
             </div>
