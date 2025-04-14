@@ -29,3 +29,14 @@
 .footer {
     
 }
+
+.headerLinkWrap {
+    display: flex;
+    gap: 32px;
+}
+
+.headerLinkWrap a {
+    text-decoration: none;
+    color: rgb(37, 37, 37);
+    font-size: 1.2rem;
+}

@@ -36,3 +36,17 @@
     flex-direction: column;
     align-items: center;
 }
+
+.radioMenu {
+    min-width: 200px;
+    color: white;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.individualRadioWrap {
+    display: flex;
+    justify-content: space-between;
+}

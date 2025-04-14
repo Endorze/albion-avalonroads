@@ -8,6 +8,11 @@ import CurrentZone from "../CurrentZone/currentZone";
 import axios from "axios";
 import ProgressBar from "../ProgressBar/progressBar";
 
+const useOverlayTestEnvironment = true
+
+const BACKEND_HOST = "90.143.5.6:55328"
+const OVERLAY_HOST = useOverlayTestEnvironment ? BACKEND_HOST : "localhost:55327"
+
 let zoneName: string | null = null
 
 const ItemSection = () => {
@@ -37,9 +42,9 @@ const ItemSection = () => {
         numRoadsExplored: 0,
     })
 
-    const handleChange = async (key: keyof typeof resources, newValue: number) => {
+    const handleChange = async (key: keyof typeof resources, newValue: number | string) => {
 
-        const response = await axios.post(`http://90.143.5.6:55328/api/v1/roads/${zoneName}/edit`, {
+        const response = await axios.post(`http://${BACKEND_HOST}/api/v1/roads/${zoneName}/edit`, {
             [key]: newValue
         })
 
@@ -56,13 +61,13 @@ const ItemSection = () => {
         if (zoneName == null) return;
 
         try {
-            const response = await axios.get(`http://90.143.5.6:55328/api/v1/roads/${zoneName}`)
-    
+            const response = await axios.get(`http://${BACKEND_HOST}/api/v1/roads/${zoneName}`)
+
             if (response.status != 200) {
                 console.log("Something bad happened")
                 return
             }
-    
+
             setResources(response.data)
         } catch (error) {
 
@@ -70,7 +75,7 @@ const ItemSection = () => {
     }
 
     const fetchExplored = async () => {
-        const response = await axios.get(`http://90.143.5.6:55328/api/v1/roads/stats`)
+        const response = await axios.get(`http://${BACKEND_HOST}/api/v1/roads/stats`)
 
         if (response.status != 200) {
             console.log("Something bad happened")
@@ -100,7 +105,7 @@ const ItemSection = () => {
 
     const getZoneName = async () => {
         try {
-            const response = await axios.get("http://localhost:55327/api/v1/current-zone")
+            const response = await axios.get(`http://${OVERLAY_HOST}/api/v1/current-zone`)
             zoneName = response.data.name
         } catch (error) {
             zoneName = null
@@ -113,8 +118,8 @@ const ItemSection = () => {
 
     return (
         <div className={styles.wrapper}>
-            <ProgressBar exploredZones={exploredData.numRoadsExplored} maxZones={exploredData.numRoads}/>
-            <CurrentZone zone={zoneName} />
+            <ProgressBar exploredZones={exploredData.numRoadsExplored} maxZones={exploredData.numRoads} />
+            <CurrentZone zone={zoneName} type={resources.type} />
             <div className={styles.horizontal}>
                 <div className={styles.tier}>
                     <div>
@@ -151,7 +156,34 @@ const ItemSection = () => {
                 </div>
             </div>
             <div className={styles.horizontal}>
-                <div></div>
+                <div className={styles.vertical}>
+                    <div className={styles.radioMenu}>
+                        <h2>Zone Type</h2>
+                        <div className={styles.individualRadioWrap}>
+                            <label htmlFor="junction">Avalonian Junction</label>
+                            <input type="radio" id="junction" name="zoneName" onChange={() => handleChange("type", "JUNCTION")}/>
+                        </div>
+                        <div className={styles.individualRadioWrap}>
+                            <label htmlFor="corridor">Avalonian Corridor</label>
+                            <input type="radio" id="corridor" name="zoneName" onChange={() => handleChange("type", "CORRIDOR")}/>
+                        </div>
+                        <div className={styles.individualRadioWrap}>
+                            <label htmlFor="sanctuary">Avalonian Sanctuary</label>
+                            <input type="radio" id="sanctuary" name="zoneName" onChange={() => handleChange("type", "SANCTUARY")}/>
+                        </div>
+                        <div className={styles.individualRadioWrap}>
+                            <label htmlFor="goldsanctuary">Golden Sanctuary</label>
+                            <input type="radio" id="goldsanctuary" name="zoneName" onChange={() => handleChange("type", "GOLD_SANCTUARY")}/>
+                        </div>
+                        <div className={styles.individualRadioWrap}>
+                            <label htmlFor="rest">Avalonian Rest</label>
+                            <input type="radio" id="rest" name="zoneName" onChange={() => handleChange("type", "REST")}/>
+                        </div>
+                    </div>
+                    <div className={styles.section}>
+
+                    </div>
+                </div>
                 <div className={styles.vertical}>
                     <div>
                         <h2>Resource Clusters</h2>
@@ -166,7 +198,7 @@ const ItemSection = () => {
                 </div>
                 <div className={styles.vertical}>
                     <div>
-                        <h2>Green Chest Cluster</h2>
+                        <h2>Chest Cluster</h2>
                     </div>
                     <div className={styles.section}>
                         <ItemCounter imageSrc={green} value={resources.greenCluster} onChange={(value) => handleChange("greenCluster", value)} />
